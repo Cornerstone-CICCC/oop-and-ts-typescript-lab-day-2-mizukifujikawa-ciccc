@@ -20,31 +20,43 @@ interface Student {
 }
 
 class Gradebook<T extends Student> {
-  students = []
+  students: T[] = []
 
-  addStudent(student) {
-
+  addStudent(student: T): string {
+    this.students.push(student);
+    return `${student.name} added to the gradebook`
   }
 
-  addGrade(id, grade) {
-
+  addGrade(id: number, grade: Grade): string {
+    const student = this.students.find(student => student.id === id);
+    student.grades.push(grade);
+    return `Grade recorded for ${grade.subject}`;
   }
 
-  getAverageGrade(id) {
-
+  getAverageGrade(id: number): number {
+    const student = this.students.find(student => student.id === id);
+    if (student.grades.length === 0) return 0;
+    const total = student.grades.reduce((sum, g) => sum + g.grade, 0);
+    return total / student.grades.length;
   }
 
-  getStudentGrades(id) {
-
+  getStudentGrades(id: number): Grade[] {
+    const student = this.students.find(student => student.id === id);
+    return student.grades;
   }
 
-  updateSubjectGrade(id, subject, newGrade) {
-
+  updateSubjectGrade(id: number, subject: string, newGrade: number): string {
+    const student = this.students.find(student => student.id === id);
+    if (!student) return `Student with ID ${id} not found.`;
+    const grade = student.grades.find(grade => grade.subject === subject);
+    if (!grade) return `${subject} not found for ${student.name}.`;
+    grade.grade = newGrade;
+    return `${student.name}'s ${subject} grade up/down to ${grade.grade}`
   }
 }
 
 // Test cases
-const gradebook = new Gradebook();
+const gradebook = new Gradebook<Student>();
 
 console.log(gradebook.addStudent({ id: 1, name: "Alice", grades: [] })); // "Alice added to the gradebook."
 console.log(gradebook.addGrade(1, { subject: "Math", grade: 90 })); // "Grade recorded for Math."

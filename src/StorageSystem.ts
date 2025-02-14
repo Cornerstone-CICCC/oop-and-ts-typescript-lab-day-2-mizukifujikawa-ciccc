@@ -9,26 +9,35 @@
 // 6. Implement a method `updateItem` that updates an item by its property value.
 
 class MyStorage<T, U> {
-  items = []
+  items: T[] = [];
 
-  addItem(item) {
-
+  addItem(item: T): string {
+    this.items.push(item);
+    return `${JSON.stringify(item)} added to storage.`;
   }
 
-  getItems() {
-
+  getItems(): T[] {
+    return this.items;
   }
 
-  removeItem(id) {
-
+  removeItem(id: number): string {
+    const index = this.items.findIndex((item: T) => item === id);
+    if (index === -1) return "Item not found.";
+    const item = this.items.splice(index, 1)[0];
+    return `${JSON.stringify(item)} removed from storage.`;
   }
 
-  findItem(prop, val) {
-
+  findItem(prop: keyof T, val: any): T | string {
+    const item = this.items.find(item => item[prop] === val);
+    return item ? item : "Item not found.";
   }
 
-  updateItem(prop, id, update) {
+  updateItem(prop: keyof T, id: number, update: Partial<T>): string {
+    const item = this.items.find((item: any) => item[prop] === id);
+    if (!item) return "Item not found.";
 
+    Object.assign(item, update);
+    return `${JSON.stringify(item)} updated successfully.`;
   }
 }
 
